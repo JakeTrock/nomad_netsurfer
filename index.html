@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>nomad internet surfer</title>
+<script type="text/javascript">
+var p1,p2;
+var breakr=false;
+function pngstrt(){
+  p1=document.getElementById("pt1").value;
+  p2=document.getElementById("pt2").value;
+  breakr=false;
+  do_ping();
+}
+function pngstp(){
+  breakr=true;
+}
+const start = 18925568;
+const end = 18926079;
+function _generateRandomIp(start, end) {
+    let r = Math.floor(Math.random() * (end - start + 1)) + start;
+    const ip = [];
+    for (let i = 0; i < 4; i++) {
+        ip.push(r % 256);
+        r = Math.floor(r / 256);
+    }
+    return ip.reverse();
+}
+function generateRandomIp(start, end) {
+    let ip = _generateRandomIp(start, end);
+    let valid = true;
+    if (valid === true) {
+      ip[0]=p1;
+      ip[1]=p2;
+        return ip.join('.');
+    } else {
+        return generateRandomIp(start, end);
+    }
+}
+var do_ping = function () {
+  if(!breakr){var nt = generateRandomIp(start, end);
+    ttle("Attempting contact with: "+nt);
+    ping(nt, "80", function(m){ if(m<700){wrt(nt);ttle("success. "+m)}else{ttle("failure to connect. Took "+m)} })}
+};
+function ping(host, port, pong) {
+  var started = new Date().getTime();
+  var http = new XMLHttpRequest();
+  http.open("GET", "http://" + host + ":" + port, true);
+  if(started<700){http.close();do_ping();}
+  http.onreadystatechange = function() {
+    if (http.readyState == 4) {
+      var ended = new Date().getTime();
+      var milliseconds = ended - started;
+      if (pong != null) {
+        pong(milliseconds);
+        do_ping();
+      }
+    }
+  };
+  try {
+    http.send(null);
+  } catch(exception) {
+    // this is expected
+  }
+}
+function ttle(a){
+  document.getElementById("status").value=a;
+}
+function wrt(b){
+  if(document.getElementById("cip").value!=null){
+    document.getElementById("lstips").value+=document.getElementById("cip").value;
+  }
+  document.getElementById("cip").value=b;
+  document.getElementById("vfr").src="http://"+b;
+}
+</script>
+</head>
+<body>
+<span><p>Ip Part One:</p><input type="text" id="pt1"><p>  Ip Part Two:</p><input type="text" id="pt2"></span>
+<button onclick="pngstrt();">Start</button>
+<button onclick="pngstp();">Stop</button>
+<p id="status"></p>
+<input type="text" id="cip"><br>
+<textarea id="lstips" style="width: 139px; height: 34px;"></textarea><br>
+<iframe src="" id="vfr"></iframe>
+</body>
+</html>
